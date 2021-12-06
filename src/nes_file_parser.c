@@ -20,7 +20,7 @@
 
 #include <json-c/json.h>
 
-const uint64_t VERSION[] = {0, 1, 0}; // v0.1.0
+const uint64_t PARSER_VERSION[] = {0, 1, 0}; // v0.1.0
 
 const char *NES_SUFFIX = ".nes";
 const char *HEADER_SUFFIX = ".json";
@@ -79,6 +79,7 @@ const char *TIMING_TYPE_STR[] = {"NTSC", "PAL", "multi-region", "Dendy"};
 
 typedef struct ines_header
 {
+    uint64_t parser_version[3];
     ines_header_type_t type;
     uint64_t prg_rom_size;  // number of 16K PRG-ROM banks
     uint64_t char_rom_size; // number of 8K CHR-ROM banks
@@ -117,7 +118,7 @@ bool header_is_nes_2(char *header_buf);
 
 typedef enum parse_result
 {
-    PR_SUCCESS = 0,
+    PR_SUCCESS = 0
 } parse_result_t;
 
 parse_result_t parse_ines_header(char *header_buf, ines_header_t *out);
@@ -229,6 +230,7 @@ bool header_is_nes_2(char *header_buf)
 // https://wiki.nesdev.com/w/index.php/INES
 parse_result_t parse_ines_header(char *header_buf, ines_header_t *out)
 {
+    memcpy(&(out->parser_version), PARSER_VERSION, sizeof(PARSER_VERSION));
     out->type = IHT_INES;
     out->prg_rom_size = *((uint8_t *)(header_buf + 4));
     out->char_rom_size = *((uint8_t *)(header_buf + 5));
